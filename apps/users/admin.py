@@ -1,7 +1,7 @@
 from django.contrib import admin
 from authtools.admin import UserAdmin
 from authtools.forms import AdminUserChangeForm
-from .models import User
+from .models import User, Customer
 
 
 class CustomAdminUserChangeForm(AdminUserChangeForm):
@@ -20,3 +20,4 @@ class MyUserAdmin(UserAdmin):
     search_fields = ["email", "full_name"]
 
 admin.site.register(User, MyUserAdmin)
+admin.site.register(Customer)

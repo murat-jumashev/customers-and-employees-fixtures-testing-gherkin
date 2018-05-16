@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from authtools.models import AbstractEmailUser
 
 
@@ -15,6 +16,24 @@ class User(AbstractEmailUser):
         return '<{}>'.format(self.email)
 
 
+def upload_to(instance, filename):
+    return 'profile_images/{0}/{1}'.format(instance.user.pk, filename)
+
+
 class Customer(models.Model):
-    photo = models.ImageField()
+    default_profile_image = 'profile.jpg'
+    photo = models.ImageField(
+        default=default_profile_image,
+        upload_to=upload_to,
+        null=True,
+        blank=True
+    )
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='customer'
+    )
     
+    def __str__(self):
+        return "{} customer profile".format(self.user.email)
+

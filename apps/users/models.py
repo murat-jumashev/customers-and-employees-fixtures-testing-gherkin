@@ -37,3 +37,18 @@ class Customer(models.Model):
     def __str__(self):
         return "{} customer profile".format(self.user.email)
 
+
+def resume_upload_to(instance, filename):
+    return 'resumes/{0}/{1}'.format(instance.user.pk, filename)
+
+
+class Employee(models.Model):
+    resume = models.FileField(upload_to=resume_upload_to)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='employee'
+    )
+
+    def __str__(self):
+        return "{} employee profile".format(self.user.email)

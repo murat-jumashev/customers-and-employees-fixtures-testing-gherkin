@@ -3,10 +3,13 @@
 {% block content %}
 <div>
     <h1>Registration</h1>
+    {% if form %}
     <form action="{% url "users:registration" %}" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save</button>
     </form>
+    {% endif %}
+    <p>{{ message }}</p>
 </div>
 {% endblock %}

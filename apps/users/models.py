@@ -43,7 +43,11 @@ def resume_upload_to(instance, filename):
 
 
 class Employee(models.Model):
-    resume = models.FileField(upload_to=resume_upload_to)
+    resume = models.FileField(
+        upload_to=resume_upload_to,
+        null=True,
+        blank=True
+    )
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

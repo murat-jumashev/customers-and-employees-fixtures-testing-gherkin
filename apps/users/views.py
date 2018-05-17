@@ -61,7 +61,7 @@ class ActivationView(TemplateView):
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist): #pylint: disable=E1101
             user = None
         if user is not None and account_activation_token.check_token(user, token):
             user.is_active = True
@@ -69,7 +69,7 @@ class ActivationView(TemplateView):
             profile_class = Employee
             if type_of_user == CUSTOMER:
                 profile_class = Customer
-            profile_class.objects.create(user=user)                                    #pylint: disable=E1101,another-one
+            profile_class.objects.create(user=user) #pylint: disable=E1101
             login(request, user)
             return redirect(reverse('website:index'))
         context['message'] = 'Activation url is wrong!'

@@ -35,7 +35,7 @@ class Customer(models.Model):
     )
     
     def __str__(self):
-        return "{} customer profile".format(self.user.email)
+        return "{} customer profile".format(self.user.email) #pylint: disable=E1101
 
 
 def resume_upload_to(instance, filename):
@@ -55,4 +55,4 @@ class Employee(models.Model):
     )
 
     def __str__(self):
-        return "{} employee profile".format(self.user.email)
+        return "{} employee profile".format(self.user.email) #pylint: disable=E1101

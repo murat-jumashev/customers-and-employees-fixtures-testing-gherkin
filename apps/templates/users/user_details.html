@@ -1,0 +1,25 @@
+{% extends "shared/base.html" %}
+{% block title %}Cabinet{% endblock %}
+{%block content%}
+
+{% if object.employee %}
+    {% if object.employee.resume %}
+        <a href="{{ object.employee.resume.url }}" target="_blank">Resume</a>
+    {% else %}
+    <p>You don't have a resume</p>
+    {% endif %}
+    <p>
+        <a href="{% url "users:edit" %}">Add new resume</a>
+    </p>
+{% elif object.customer %}
+    {% if object.customer.photo %}
+        <img style="max-width: 100px;" src="{{ object.customer.photo.url }}" alt="profile photo">
+    {% endif %}
+    <p>
+        <a href="{% url "users:edit" %}">Add new photo</a>
+    </p>
+{% else %}
+    <p>You don't have your profile created. Contact site admin.</p>
+{% endif %}
+
+{% endblock %}

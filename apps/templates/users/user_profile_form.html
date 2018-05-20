@@ -1,0 +1,28 @@
+{% extends "shared/base.html" %}
+{% block title %}Profile edit{% endblock %}
+{%block content%}
+    {% if user.employee %}
+    <form action="{% url "users:edit" %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <label for="id_resume">Resume: </label>
+            <input type="file" name="resume" id="id_resume">
+        </p>
+        <button type="submit">Save</button>
+    </form>
+    {% elif user.customer %}
+    <form action="{% url "users:edit" %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            <label for="id_photo">Photo: </label>
+            <input type="file" name="photo" id="id_photo">
+        </p>
+        <button type="submit">Save</button>
+    </form>
+    {% else %}
+        <p>You don't have your profile created. Contact site admin.</p>
+    {% endif %}
+
+    {% endblock %}
+    </div>
+</div>

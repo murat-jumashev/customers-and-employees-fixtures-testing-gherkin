@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView
+from django.views.generic import (
+    TemplateView, DetailView, UpdateView, ListView
+)
 from django.views.generic.edit import FormMixin
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
-from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
+from django.utils.decorators import method_decorator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from .forms import UserForm, choices
@@ -74,3 +78,36 @@ class ActivationView(TemplateView):
             return redirect(reverse('website:index'))
         context['message'] = 'Activation url is wrong!'
         return self.render_to_response(context)
+
+
+@method_decorator(login_required, name='dispatch')
+class CabinetView(DetailView):
+    template_name = "users/user_details.html"
+
+    def get_object(self):
+        return self.request.user
+
+
+@method_decorator(login_required, name='dispatch')
+class ProfileEditView(UpdateView):
+    template_name = "users/user_profile_form.html"
+    fields = ["resume"]
+    success_url = reverse_lazy("users:cabinet")
+
+    def get_object(self):
+        try:
+            return self.request.user.employee
+        except User.employee.RelatedObjectDoesNotExist: # pylint: disable=E1101
+            self.fields = ["photo"]
+            return self.request.user.customer
+        except User.customer.RelatedObjectDoesNotExist: # pylint: disable=E1101
+            return None
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+class CustomersList(ListView):
+    model = Customer
+    template_name = "users/customers_list.html"

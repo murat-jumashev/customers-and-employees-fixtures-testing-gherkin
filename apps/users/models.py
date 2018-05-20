@@ -33,6 +33,11 @@ class Customer(models.Model):
         on_delete=models.CASCADE,
         related_name='customer'
     )
+    class Meta:
+        permissions = [
+            ('can_view','Can view customers')
+        ]
+
     
     def __str__(self):
         return "{} customer profile".format(self.user.email) #pylint: disable=E1101
@@ -53,6 +58,10 @@ class Employee(models.Model):
         on_delete=models.CASCADE,
         related_name='employee'
     )
+    class Meta:
+        permissions = [
+            ('can_view','Can view employees')
+        ]
 
     def __str__(self):
         return "{} employee profile".format(self.user.email) #pylint: disable=E1101

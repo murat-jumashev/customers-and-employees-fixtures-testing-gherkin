@@ -7,6 +7,7 @@ from django.views.generic.edit import FormMixin
 from django.core.mail import EmailMessage
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin 
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
@@ -108,6 +109,15 @@ class ProfileEditView(UpdateView):
         return super().form_valid(form)
 
 
-class CustomersList(ListView):
+@method_decorator(login_required, name='dispatch')
+class CustomersList(PermissionRequiredMixin, ListView):
+    permission_required = 'users.can_view'
     model = Customer
     template_name = "users/customers_list.html"
+
+    def handle_no_permission(self):
+        self.object_list = []
+        context = self.get_context_data()
+        context['no_permission'] = True
+        context['no_permission_text'] = 'Сен бул жерде болбошуң керек :)'
+        return render(self.request, self.template_name, context)

@@ -1,8 +1,12 @@
 {% extends "shared/base.html" %}
-{% block title %}Profile edit{% endblock %}
+{% block title %}Customers list{% endblock %}
 {%block content%}
-    {% for x in object_list %}
-    {{ x }}
-    {% endfor %}
-    {% endblock %}
-    
+    {% if no_permission %}
+        <p>{{ no_permission_text }}</p>
+    {% else %}
+        {% for x in object_list %}
+            <p>{{ x }}</p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+

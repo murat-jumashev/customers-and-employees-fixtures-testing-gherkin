@@ -18,6 +18,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .forms import UserForm, choices
 from .models import User, Customer, Employee
 from .tokens import account_activation_token
+from .utils import EmailMessageInThread
 
 
 EMPLOYEE = choices[0][0]
@@ -79,8 +80,8 @@ class ActivationView(TemplateView):
                     'domain': current_site.domain,
                 })
                 to_email = settings.ADMIN_EMAIL
-                email = EmailMessage(mail_subject, message, to=[to_email])
-                email.send()
+                email = EmailMessageInThread(mail_subject, message, to=[to_email])
+                email.send_async()
                 context['message'] = 'Activation request sent to site admin'
                 return self.render_to_response(context)
             if type_of_user == CUSTOMER:

@@ -1,0 +1,5 @@
+{% autoescape off %}
+Hi admin,
+There is a new user with email {{ user.email }} who needs approval and activation.
+Please, follow the link to view the user: http://{{ domain }}/admin/users/user/{{ user.pk }}/change/
+{% endautoescape %}

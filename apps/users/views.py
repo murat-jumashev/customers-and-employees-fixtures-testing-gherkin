@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
@@ -57,6 +58,7 @@ class RegistrationView(FormMixin, TemplateView):
 
 class ActivationView(TemplateView):
     template_name = 'registration/activation_page.html'
+    email_template = 'registration/employee_activation.html'
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
@@ -69,14 +71,24 @@ class ActivationView(TemplateView):
         except(TypeError, ValueError, OverflowError, User.DoesNotExist): #pylint: disable=E1101
             user = None
         if user is not None and account_activation_token.check_token(user, token):
-            user.is_active = True
-            user.save()
-            profile_class = Employee
+            if type_of_user == EMPLOYEE:
+                current_site = get_current_site(request)
+                mail_subject = 'New employee needs activation.'
+                message = render_to_string(self.email_template, {
+                    'user': user,
+                    'domain': current_site.domain,
+                })
+                to_email = settings.ADMIN_EMAIL
+                email = EmailMessage(mail_subject, message, to=[to_email])
+                email.send()
+                context['message'] = 'Activation request sent to site admin'
+                return self.render_to_response(context)
             if type_of_user == CUSTOMER:
-                profile_class = Customer
-            profile_class.objects.create(user=user) #pylint: disable=E1101
-            login(request, user)
-            return redirect(reverse('website:index'))
+                user.is_active = True
+                user.save()
+                Customer.objects.create(user=user) #pylint: disable=E1101
+                login(request, user)
+                return redirect(reverse('website:index'))
         context['message'] = 'Activation url is wrong!'
         return self.render_to_response(context)
 

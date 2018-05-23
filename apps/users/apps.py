@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 
 
 class UsersConfig(AppConfig):
-    name = 'users'
+    name = 'apps.users'
 
     def ready(self):
         from .models import Employee

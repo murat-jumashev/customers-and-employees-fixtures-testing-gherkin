@@ -1,1 +1,0 @@
-## [Example project is here](https://github.com/saucelabs-sample-test-frameworks/Python-Behave-Selenium)

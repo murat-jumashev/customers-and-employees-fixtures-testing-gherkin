@@ -1,0 +1,73 @@
+{% extends 'shared/base.html' %}
+{% block title %}Contact page{% endblock %}
+{%block content%}
+<div>
+    <div id='success' style="display: none">
+        Ваше сообщение успешно отправлено. Спасибо!
+    </div>
+    <div id='fail' style="display: none"></div>
+    <form id='contactForm' action="{% url "website:contact" %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button id='submitBtn'>Save</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $(document).ready(function() {
+        var formEl = $('#contactForm');
+        var submitBtnEl = $('#submitBtn');
+        var url = formEl.attr('action');
+        var successMsqEl = $('#success');
+        var failMsgEl = $('#fail');
+
+        var textInputEl = $('#id_text');
+        var nameInputEl = $('#id_name');
+        var emailInputEl = $('#id_email');
+        var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+
+        submitBtnEl.on('click', function(event) {
+            event.preventDefault();
+            var text = textInputEl.val()
+            var name = nameInputEl.val()
+            var email = emailInputEl.val()
+            $.ajax({
+                method: "POST",
+                url: url,
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+                data: { name: name, email: email, text: text }
+            })
+            .done(function( msg ) {
+                formEl.hide();
+                successMsqEl.show();
+            })
+            .fail(function( error ) {
+                var errors = '<ul>'
+                var errObj = error.responseJSON;
+                for (key in errObj) {
+                    var listOfValues = errObj[key]
+                    console.log(key);
+                    errors = errors + key + ' ';
+                    for (var i=0; i < listOfValues.length; i++) {
+                        errors = errors + '<li>' + listOfValues[i] + '</li>'
+                    }
+                }
+                errors = errors + '</ul>'
+                failMsgEl.html(errors);
+                failMsgEl.show();
+            })
+        })
+    })
+</script>
+{% endblock %}

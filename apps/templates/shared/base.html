@@ -16,7 +16,7 @@
                 <ul>
                     <li><a href="{% url "website:index" %}">Home</a></li>
                     <li><a href="#">About</a></li>
-                    <li><a href="#">Gallery</a></li>
+                    <li><a href="{% url "website:contact" %}">Contact us</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'users:cabinet' %}">Cabinet</a></li>
                     <li><a href="{% url 'logout' %}">Logout</a></li>
@@ -28,16 +28,24 @@
             </nav>
         </header>
         <div class="container">
-        {% block content %}
-        {% endblock %}
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
         </div>
         <p></p>
         <footer>This is footer</footer>
         </div>
     </div>
-    <script>
-        console.log('Hi!')
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{% static "js/main.js" %}" type="text/javascript"></script>
+    {% block javascript %}
+    {% endblock %}
 </body>
 </html>

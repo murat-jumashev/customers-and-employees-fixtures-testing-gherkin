@@ -1,0 +1,6 @@
+# Import from prod.txt:
+-r prod.txt
+
+selenium==3.12.0
+behave==1.2.6
+behave-django==1.1.0

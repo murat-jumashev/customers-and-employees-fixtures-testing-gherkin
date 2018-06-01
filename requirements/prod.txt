@@ -3,5 +3,3 @@ Pillow==5.1.0
 django-authtools==1.6.0
 celery==4.1.1
 redis==2.10.6
-selenium==3.12.0
-behave==1.2.6
